@@ -10,16 +10,19 @@ import requests
 
 # Create your views here.
 def top_artists():
+    
+    
     url = "https://spotify-scraper.p.rapidapi.com/v1/chart/artists/top"
+    
     querystring = {"type":"weekly"}
     
     headers = {
 	"x-rapidapi-key": "420f087612msh2ab2f3663ca16f9p12fd4bjsn6e69cd71ebc7",
 	"x-rapidapi-host": "spotify-scraper.p.rapidapi.com"
-}
-
+    }
+    
     response = requests.get(url, headers=headers, params=querystring)
-
+    
     response_data = response.json()
 
     artists_info = []
@@ -42,17 +45,16 @@ def top_tracks():
     headers = {
 	"x-rapidapi-key": "420f087612msh2ab2f3663ca16f9p12fd4bjsn6e69cd71ebc7",
 	"x-rapidapi-host": "spotify-scraper.p.rapidapi.com"
-}
-
+    }
+    
     response = requests.get(url, headers=headers, params=querystring)
     data = response.json()
-
     track_details = []
 
     if 'tracks' in data:
-
         shortened_data = data['tracks'][:18]
 
+        # id, name, artist, cover url 
         for track in shortened_data:
             track_id = track['id']
             track_name = track['name']
@@ -66,35 +68,56 @@ def top_tracks():
                 'cover_url': cover_url
             })
 
-        else:
-            print("Track  not in data")
+    else:
+        print("track not foun in response")
 
-        return track_details    
-
+    return track_details
     
 
 
-# Create your views here.
 @login_required(login_url='login')
 def index(request):
-    top_tracks_list = top_tracks()
-
-    print(top_tracks_list)
-
-    first_six = top_tracks_list[:6]
-    second_six = top_tracks_list[6:12]
-    third_six = top_tracks_list[12:18]
-
     artists_info = top_artists()
-    print(artists_info)
+    top_track_list = top_tracks()
 
+    # divide the list into three parts
+    first_six_tracks = top_track_list[:6]
+    second_six_tracks = top_track_list[6:12]
+    third_six_tracks = top_track_list[12:18]
+
+    print(top_track_list)
     context = {
         'artists_info' : artists_info,
-        'first_six': first_six,
-        'second_six': second_six,
-        'third_six' : third_six,
+        'first_six_tracks': first_six_tracks,
+        'second_six_tracks': second_six_tracks,
+        'third_six_tracks': third_six_tracks,
     }
     return render(request, 'index.html', context)
+
+def music(request, pk):
+    track_id = pk
+    url = "https://spotify-scraper.p.rapidapi.com/v1/track/metadata"
+    
+    querystring = {"trackId": track_id}
+
+    headers = {
+	"x-rapidapi-key": "420f087612msh2ab2f3663ca16f9p12fd4bjsn6e69cd71ebc7",
+	"x-rapidapi-host": "spotify-scraper.p.rapidapi.com"}
+    response = requests.get(url, headers=headers, params=querystring)
+    
+    if response.status_code == 200:
+        data = response.json()
+        # extract track_name, artist_name
+
+        track_name = data.get("name")
+        artist_list = data.get("artist", [])
+        first_artist_name = artist_list[0].get("name") if artist_list else "No artist found"
+
+        context = {
+            'track_name': track_name,
+            'artist_name': first_artist_name,
+        }
+    return render(request, 'music.html')
 
 def login(request):
     if request.method == "POST":

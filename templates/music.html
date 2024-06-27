@@ -1,10 +1,12 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Streaming Service</title>
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
 </head>
 <body style="margin:0; padding:0; background:#121212; font-family:Arial, sans-serif; color:#fff;">
     <!-- Sidebar remains unchanged -->
@@ -52,11 +54,13 @@
     <!-- Main content area where we will add the music player -->
     <div class="music-player" style="margin-left:240px; padding:20px; display: flex; justify-content: center; align-items: center; height: calc(100vh - 90px);">
         <!-- Music Player Interface -->
+       
         <div class="player-container">
+            <br><br> <br><br><br><br><br>
             <img class="album-cover" src="https://geo-media.beatsource.com/image_size/500x500/5/9/7/5974a942-7721-44db-982d-88b641bb4c94.jpg" alt="Album Cover">
             <div class="song-info">
-                <h2 class="song-title">Song Name</h2>
-                <h3 class="artist-name">Artist Name</h3>
+                <h2 class="song-title">{{track_name}}</h2>
+                <h3 class="artist-name">{{artist_name}}</h3>
             </div>
             <div class="player-controls">
                 <button id="prev" class="control-btn">&#9668;</button>
@@ -72,7 +76,7 @@
             </div>
         </div>
     
-        <audio id="audio-player" src="audio-source-url"></audio>
+        <audio id="audio-player" src="{% static 'audio-source-url' %}"></audio>
     </div>
 </body>
 </html>
