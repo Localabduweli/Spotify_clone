@@ -5,6 +5,8 @@ from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 import requests
+from bs4 import BeautifulSoup as bs
+import re
 
 
 
@@ -72,9 +74,43 @@ def top_tracks():
         print("track not foun in response")
 
     return track_details
+
+
+
     
+def get_audio_details(query):
+    url = "https://spotify-scraper.p.rapidapi.com/v1/track/download"
+    
+    querystring = {"track":query}
+    
+    headers = {
+	"x-rapidapi-key": "420f087612msh2ab2f3663ca16f9p12fd4bjsn6e69cd71ebc7",
+	"x-rapidapi-host": "spotify-scraper.p.rapidapi.com"
+    }
+    
+    response = requests.get(url, headers=headers, params=querystring)
+    
+    audio_details = []
 
+    if response.status_code == 200:
+        response_data = response.json()
 
+        if 'youtubeVideo' in response_data and 'audio' in response_data['youtubeVideo']:
+            audio_list = response_data['youtubeVideo']['audio']
+            if audio_list:
+                first_audio_url = audio_list[0]['url']
+                duration_text = audio_list[0]['durationText']
+
+                audio_details.append(first_audio_url)
+                audio_details.append(duration_text)
+            else:
+                print("No audio data availble")
+        else:
+            print("No 'youtubeVideo' or 'audio' key found")
+    else:
+        print("Failed to fetch data")
+
+    return audio_details
 @login_required(login_url='login')
 def index(request):
     artists_info = top_artists()
@@ -94,6 +130,25 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
+def get_track_image(track_id, track_name):
+    url = 'https://open.spotify.com/track/'+track_id
+    r = requests.get(url)
+    soup = bs(r.content)
+    image_links_html = soup.find('img', {'alt': track_name})
+    if image_links_html:
+        image_links = image_links_html['srcset']
+    else:
+        image_links = ''
+
+    match = re.search(r'https:\/\/i\.scdn\.co\/image\/[a-zA-Z0-9]+ 640w', image_links)
+
+    if match:
+        url_640w = match.group().rstrip(' 640w')
+    else:
+        url_640w = ''
+
+    return url_640w
+
 def music(request, pk):
     track_id = pk
     url = "https://spotify-scraper.p.rapidapi.com/v1/track/metadata"
@@ -104,20 +159,36 @@ def music(request, pk):
 	"x-rapidapi-key": "420f087612msh2ab2f3663ca16f9p12fd4bjsn6e69cd71ebc7",
 	"x-rapidapi-host": "spotify-scraper.p.rapidapi.com"}
     response = requests.get(url, headers=headers, params=querystring)
-    
+
     if response.status_code == 200:
         data = response.json()
-        # extract track_name, artist_name
+        # extrack track_name, artist_name
 
         track_name = data.get("name")
-        artist_list = data.get("artist", [])
-        first_artist_name = artist_list[0].get("name") if artist_list else "No artist found"
+        artists_list = data.get("artists", [])
+        first_artist_name = artists_list[0].get("name") if artists_list else "No artist found"
 
+        audio_details_query = track_name + first_artist_name
+        audio_details = get_audio_details(audio_details_query)
+        audio_url = audio_details[0]
+        duration_text = audio_details[1]
+
+        track_image = get_track_image(track_id, track_name)
+        
+        
         context = {
             'track_name': track_name,
             'artist_name': first_artist_name,
+            'audio_url': audio_url,
+            'duration_text': duration_text,
+            'track_image': track_image,
+
         }
-    return render(request, 'music.html')
+    
+    return render(request, 'music.html', context)
+
+def profile(request, pk):
+    return render(request, 'profile.html')
 
 def login(request):
     if request.method == "POST":
