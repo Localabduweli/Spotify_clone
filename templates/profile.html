@@ -70,7 +70,7 @@
     <!-- Artist Header -->
     <div class="relative">
       <!-- Increased height with inline style -->
-      <img src="https://cdn.punchng.com/wp-content/uploads/2023/05/20120536/Rema.jpeg" alt="Rema" style="height: 600px; object-fit: cover; width: 100%;">
+      <img src="{{headerUrl}}" alt="{{name}}" style="height: 600px; object-fit: cover; width: 100%;">
       <div class="absolute bottom-0 p-5 w-full" style="background: rgba(0, 0, 0, 0.5);">
         <div class="flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
@@ -79,8 +79,8 @@
           </svg>
           <span class="text-sm text-gray-300 ml-1">Verified Artist</span>
         </div>
-        <h1 class="text-5xl font-bold text-white mt-2">Rema</h1>
-        <p class="text-gray-300">33,675,633 monthly listeners</p>
+        <h1 class="text-5xl font-bold text-white mt-2">{{name}}</h1>
+        <p class="text-gray-300">{{monthlyListeners}} monthly listeners</p>
       </div>
     </div>
     
@@ -90,17 +90,21 @@
       <h2 class="text-2xl font-bold mb-4">Songs</h2>
       <div class="divide-y divide-gray-800">
         <!-- Single Track Row -->
-        <div class="flex justify-between items-center py-3">
+         {% for track in topTracks %}
+        <div class="grid grid-cols-3 items-center py-3">
           <div class="flex items-center space-x-4">
-            <img src="https://i.scdn.co/image/ab67616d00001e02963265801aa5c9740ad159b7" alt="Song Image" class="w-12 h-12">
+            <img src="{{track.track_image}}" alt="Song Image" class="w-12 h-12">
             <div>
-              <p class="text-base font-medium">Calm Down</p>
-              <p class="text-xs text-gray-400">Rema, Selena Gomez</p>
+              <a href="/music/{{track.id}}">
+              <p class="text-base font-medium">{{track.name}}</p>
+              <p class="text-xs text-gray-400">{{name}}</p>
+            </a>
             </div>
           </div>
-          <div class="text-gray-400">1,182,474,314</div>
-          <div class="text-gray-400">3:59</div>
+          <div class="justify-self-end text-gray-400">{{track.playCount}}</div>
+          <div class="justify-self-end text-gray-400">{{track.durationText}}</div>
         </div>
+        {% endfor %}
         <!-- Repeat for other tracks -->
       </div>
       <!-- <a href="#" class="text-green-500 text-sm">See more</a> -->

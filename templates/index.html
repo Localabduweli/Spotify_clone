@@ -79,7 +79,7 @@
                 <!-- Artist Card -->
                  {% for artist in artists_info %}
                 <div class="artist-card">
-                    <a href="#" style="text-decoration: none;">
+                    <a href="/profile/{{artist.2}}" style="text-decoration: none;">
                     <img src="{{artist.1}}" alt="{{artist.0}}" style="width:150px; height:150px; border-radius:50%;">
                     <div class="artist-info">
                         <div class="artist-name">{{artist.0}}</div>

@@ -188,7 +188,52 @@ def music(request, pk):
     return render(request, 'music.html', context)
 
 def profile(request, pk):
-    return render(request, 'profile.html')
+    artist_id = pk 
+    url = "https://spotify-scraper.p.rapidapi.com/v1/artist/overview"
+    querystring = {"artistId":artist_id}
+    
+    headers = {
+	"x-rapidapi-key": "420f087612msh2ab2f3663ca16f9p12fd4bjsn6e69cd71ebc7",
+	"x-rapidapi-host": "spotify-scraper.p.rapidapi.com"}
+    
+    response = requests.get(url, headers=headers, params=querystring)
+
+    if response.status_code == 200:
+        data = response.json()
+
+        name = data["name"]
+        monthly_listeners = data["stats"]["monthlyListeners"]
+        header_url = data["visuals"]["header"][0]["url"]
+
+        top_tracks = []
+
+        for track in data["discography"]["topTracks"]:
+            trackid = str(track["id"])
+            trackname = str(track["name"])
+            if get_track_image(trackid, trackname):
+                trackimage = get_track_image(trackid, trackname)
+            else:
+                trackimage = "https://imgv3.fotor.com/images/blog-richtext-image/music-of-the-spheres-album-cover.jpg"
+
+            track_info = {
+                "id": track["id"],
+                "name": track["name"],
+                "durationText": track["durationText"],
+                "playCount": track["playCount"],
+                "track_image": trackimage
+            }
+
+            top_tracks.append(track_info)
+
+        artist_data = {
+            "name": name,
+            "monthlyListeners": monthly_listeners,
+            "headerUrl": header_url,
+            "topTracks": top_tracks,
+        }
+    else:
+        artist_data = {}
+    return render(request, 'profile.html', artist_data)
 
 def login(request):
     if request.method == "POST":
