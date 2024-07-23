@@ -13,16 +13,23 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-w5!81q&(+l)88)74vit^fox1-n&(m-^at--6_bxy-%bow3%le1'
 
-DEBUG = True  # Set to False in production
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',  
-    'xe77xebskk.execute-api.us-west-2.amazonaws.com',  
-]
+ALLOWED_HOSTS = []
+
+
+# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -49,7 +56,7 @@ ROOT_URLCONF = 'spotify_clone.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Corrected BASE_DIR usage
+        'DIRS': [BASE_DIR, 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -64,16 +71,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'spotify_clone.wsgi.application'
 
+
+# Database
+# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
-        'USER': 'root',
+        'USER' : 'root',
         'PASSWORD': 'fK2d5xJKv8Kft3Ya',
-        'HOST': 'postgresql-rds-rigid-jackfruit-6qrg.cnue8q8yiyy3.us-west-2.rds.amazonaws.com',
+        'HOST':'postgresql-rds-rigid-jackfruit-6qrg.cnue8q8yiyy3.us-west-2.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
+
+
+# Password validation
+# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -90,6 +105,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# Internationalization
+# https://docs.djangoproject.com/en/5.0/topics/i18n/
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -98,25 +117,22 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = '/static/'
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.0/howto/static-files/
+
+STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIRS = [
+STATICFILES_DIRS =  [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://xe77xebskk.execute-api.us-west-2.amazonaws.com ',
+    'https://c0ygpdq1n4.execute-api.us-west-2.amazonaws.com',
 ]
-
-CSRF_COOKIE_SECURE = False  # Set to True if using HTTPS
-SESSION_COOKIE_SECURE = False  # Set to True if using HTTPS
-
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'DENY'
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
