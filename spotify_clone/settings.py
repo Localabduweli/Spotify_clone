@@ -21,7 +21,7 @@ DEBUG = True  # Set to False in production
 
 ALLOWED_HOSTS = [
     '127.0.0.1',  
-    'c0ygpdq1n4.execute-api.us-west-2.amazonaws.com',  # Your deployed domain
+    'xe77xebskk.execute-api.us-west-2.amazonaws.com',  
 ]
 
 INSTALLED_APPS = [
@@ -108,7 +108,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://c0ygpdq1n4.execute-api.us-west-2.amazonaws.com',
+    'https://xe77xebskk.execute-api.us-west-2.amazonaws.com ',
 ]
 
 CSRF_COOKIE_SECURE = False  # Set to True if using HTTPS
